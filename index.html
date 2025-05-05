@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seminar Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Auth Container -->
+    <div id="auth-container">
+        <!-- Login Form -->
+        <div id="login-form" class="auth-form">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="login-email">Email or Username</label>
+                    <input type="text" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+            <p>Don't have an account? <a href="#" id="showRegister">Register</a></p>
+            <p>Forgot password? <a href="#" id="showResetPassword">Reset Password</a></p>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-form" class="auth-form" style="display: none;">
+            <h2>Register</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="register-name">Name</label>
+                    <input type="text" id="register-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-username">Username</label>
+                    <input type="text" id="register-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                <button type="button" id="request-otp-btn" class="btn-secondary">Request OTP</button>
+                <div id="otp-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="register-otp">Enter OTP</label>
+                        <input type="text" id="register-otp" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Register</button>
+                </div>
+            </form>
+            <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
+        </div>
+
+        <!-- Reset Password Form -->
+        <div id="reset-password-form" class="auth-form" style="display: none;">
+            <h2>Reset Password</h2>
+            <form id="resetPasswordForm">
+                <div class="form-group">
+                    <label for="reset-email">Email</label>
+                    <input type="email" id="reset-email" required>
+                </div>
+                <button type="button" id="request-reset-otp-btn" class="btn-secondary">Request OTP</button>
+                <div id="reset-otp-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="reset-otp">Enter OTP</label>
+                        <input type="text" id="reset-otp" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reset-password">New Password</label>
+                        <input type="password" id="reset-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reset-confirm-password">Confirm New Password</label>
+                        <input type="password" id="reset-confirm-password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Reset Password</button>
+                </div>
+            </form>
+            <p>Remember your password? <a href="#" id="showLoginFromReset">Login</a></p>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div id="main-container" style="display: none;">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <h1>Seminar Management System</h1>
+                <div class="user-info">
+                    <span id="user-info"></span>
+                    <button id="logout-btn" class="btn-secondary">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="books">Books</button>
+            <button class="tab-btn" data-tab="issued">Issued Books</button>
+            <button class="tab-btn" data-tab="logs">Issue Logs</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="books-tab">
+            <!-- Search and Add Section -->
+            <div class="actions-section">
+                <div class="search-box">
+                    <input type="text" id="search-input" placeholder="Search books...">
+                    <button id="search-btn" class="btn-primary">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+                <div class="action-buttons">
+                    <button id="add-book-btn" class="btn-primary">
+                        <i class="fas fa-plus"></i> Add New Book
+                    </button>
+                    <button id="bulk-import-btn" class="btn-secondary">
+                        <i class="fas fa-file-import"></i> Bulk Import
+                    </button>
+                </div>
+            </div>
+
+            <!-- Books Container -->
+            <div id="books-container"></div>
+
+            <!-- Pagination -->
+            <div class="pagination"></div>
+        </div>
+
+        <div class="tab-content" id="issued-tab" style="display: none;">
+            <div id="issued-books-list" class="books-container"></div>
+            <div class="pagination" id="issued-pagination"></div>
+        </div>
+
+        <div class="tab-content" id="logs-tab" style="display: none;">
+            <div id="issue-logs-list" class="logs-container"></div>
+            <div class="pagination" id="logs-pagination"></div>
+        </div>
+
+        <!-- Add Book Modal -->
+        <div id="add-book-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Add New Book</h2>
+                <form id="add-book-form">
+                    <div class="form-group">
+                        <label for="book-id">ID:</label>
+                        <input type="number" id="book-id" name="ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-accession">Accession Number:</label>
+                        <input type="number" id="book-accession" name="Accession_Number">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-mal-acc">MAL ACC Number:</label>
+                        <input type="number" id="book-mal-acc" name="MAL_ACC_Number">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-title">Title:</label>
+                        <input type="text" id="book-title" name="Title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-author">Author:</label>
+                        <input type="text" id="book-author" name="Author" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-author1">Author 1:</label>
+                        <input type="text" id="book-author1" name="Author1">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-author2">Author 2:</label>
+                        <input type="text" id="book-author2" name="Author2">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-author3">Author 3:</label>
+                        <input type="text" id="book-author3" name="Author3">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-publisher">Publisher:</label>
+                        <input type="text" id="book-publisher" name="Publisher" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-edition">Edition:</label>
+                        <input type="text" id="book-edition" name="Edition">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-publishing-year">Publishing Year:</label>
+                        <input type="number" id="book-publishing-year" name="Publishing_Year" min="1800" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="book-category1">Category 1:</label>
+                        <input type="text" id="book-category1" name="Category1">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-category2">Category 2:</label>
+                        <input type="text" id="book-category2" name="Category2">
+                    </div>
+                    <div class="form-group">
+                        <label for="book-category3">Category 3:</label>
+                        <input type="text" id="book-category3" name="Category3">
+                    </div>
+                    <button type="submit" class="btn-primary">Add Book</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Edit Book Modal -->
+        <div id="edit-book-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Edit Book</h2>
+                <form id="edit-book-form">
+                    <div class="form-group">
+                        <label for="edit-book-id">ID:</label>
+                        <input type="number" id="edit-book-id" name="ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-accession">Accession Number:</label>
+                        <input type="number" id="edit-book-accession" name="Accession_Number">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-mal-acc">MAL ACC Number:</label>
+                        <input type="number" id="edit-book-mal-acc" name="MAL_ACC_Number">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-title">Title:</label>
+                        <input type="text" id="edit-book-title" name="Title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-author">Author:</label>
+                        <input type="text" id="edit-book-author" name="Author" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-author1">Author 1:</label>
+                        <input type="text" id="edit-book-author1" name="Author1">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-author2">Author 2:</label>
+                        <input type="text" id="edit-book-author2" name="Author2">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-author3">Author 3:</label>
+                        <input type="text" id="edit-book-author3" name="Author3">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-publisher">Publisher:</label>
+                        <input type="text" id="edit-book-publisher" name="Publisher" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-edition">Edition:</label>
+                        <input type="text" id="edit-book-edition" name="Edition">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-publishing-year">Publishing Year:</label>
+                        <input type="number" id="edit-book-publishing-year" name="Publishing_Year" min="1800" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-category1">Category 1:</label>
+                        <input type="text" id="edit-book-category1" name="Category1">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-category2">Category 2:</label>
+                        <input type="text" id="edit-book-category2" name="Category2">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-category3">Category 3:</label>
+                        <input type="text" id="edit-book-category3" name="Category3">
+                    </div>
+                    <button type="submit" class="btn-primary">Update Book</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Issue Book Modal -->
+        <div id="issue-book-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Issue Book</h2>
+                <form id="issue-book-form">
+                    <input type="hidden" id="issue-book-id" name="bookId">
+                    <div class="form-group">
+                        <label for="borrower-name">Borrower Name</label>
+                        <input type="text" id="borrower-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="borrower-email">Borrower Email</label>
+                        <input type="email" id="borrower-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="return-date">Return Date</label>
+                        <input type="date" id="return-date" name="returnDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="remarks">Remarks</label>
+                        <textarea id="remarks" name="remarks"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Issue Book</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- View Issued Books Modal -->
+        <div id="issued-books-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Issued Books</h2>
+                <div id="issued-books-list"></div>
+            </div>
+        </div>
+
+        <!-- Add Bulk Import Modal -->
+        <div id="bulk-import-modal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Bulk Import Books</h2>
+                <div class="import-instructions">
+                    <h3>Required File Format</h3>
+                    <p>Your file should be in CSV or Excel format with the following columns:</p>
+                    <ul class="required-columns">
+                        <li><strong>ID</strong> - Unique identifier for the book</li>
+                        <li><strong>Title</strong> - Book title</li>
+                        <li><strong>Author</strong> - Main author name</li>
+                        <li><strong>Publisher</strong> - Publisher name</li>
+                        <li><strong>Accession_Number</strong> - Accession number (optional)</li>
+                        <li><strong>MAL_ACC_Number</strong> - MAL accession number (optional)</li>
+                        <li><strong>Author1</strong> - Additional author (optional)</li>
+                        <li><strong>Author2</strong> - Additional author (optional)</li>
+                        <li><strong>Author3</strong> - Additional author (optional)</li>
+                        <li><strong>Edition</strong> - Book edition (optional)</li>
+                        <li><strong>Publishing_Year</strong> - Year of publication (optional)</li>
+                        <li><strong>Category1</strong> - Primary category (optional)</li>
+                        <li><strong>Category2</strong> - Secondary category (optional)</li>
+                        <li><strong>Category3</strong> - Tertiary category (optional)</li>
+                    </ul>
+                    <p class="note">Note: Column names are case-sensitive and must match exactly as shown above.</p>
+                </div>
+                <form id="bulk-import-form">
+                    <div class="form-group">
+                        <label for="import-file">Select File:</label>
+                        <input type="file" id="import-file" accept=".csv,.xlsx,.xls" required>
+                    </div>
+                    <div id="file-preview" style="display: none;">
+                        <h4>File Preview</h4>
+                        <div id="preview-content"></div>
+                    </div>
+                    <div id="column-mapping" style="display: none;">
+                        <h4>Column Mapping</h4>
+                        <div id="mapping-content"></div>
+                    </div>
+                    <button type="submit" class="btn-primary" id="import-submit-btn" disabled>
+                        <i class="fas fa-upload"></i> Import Books
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html> 
