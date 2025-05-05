@@ -23,8 +23,8 @@ A desktop application for managing seminars, built with Electron and SQLite.
 ## Download
 
 ### Latest Release
-- [macOS (DMG)](https://github.com/yourusername/seminar-management-system/releases/latest/download/Seminar-Management-System.dmg)
-- [Windows (NSIS Installer)](https://github.com/yourusername/seminar-management-system/releases/latest/download/Seminar-Management-System-Setup.exe)
+- [macOS (DMG)](https://github.com/ahmadbilalzaidi/seminar-management-system/releases/download/v1.0.0/Seminar-Management-System-1.0.0-arm64.dmg)
+- [macOS (ZIP)](https://github.com/ahmadbilalzaidi/seminar-management-system/releases/download/v1.0.0/Seminar-Management-System-1.0.0-arm64-mac.zip)
 
 ## Installation
 
@@ -45,7 +45,7 @@ A desktop application for managing seminars, built with Electron and SQLite.
 3. **From Source**
    ```bash
    # Clone the repository
-   git clone https://github.com/yourusername/seminar-management-system.git
+   git clone https://github.com/ahmadbilalzaidi/seminar-management-system.git
    cd seminar-management-system
 
    # Install dependencies
@@ -71,7 +71,7 @@ A desktop application for managing seminars, built with Electron and SQLite.
 3. **From Source**
    ```bash
    # Clone the repository
-   git clone https://github.com/yourusername/seminar-management-system.git
+   git clone https://github.com/ahmadbilalzaidi/seminar-management-system.git
    cd seminar-management-system
 
    # Install dependencies
