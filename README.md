@@ -2,7 +2,7 @@
 
 A desktop application for managing seminars, built with Electron and SQLite.
 
-![Application Screenshot](asset/screenshots/main-window.png)
+![Application Screenshot](asset/screenshots/seminar-management.png)
 
 ## Features
 
