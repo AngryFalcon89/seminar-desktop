@@ -49,7 +49,10 @@
                     <label for="register-password">Password</label>
                     <input type="password" id="register-password" required>
                 </div>
-                <button type="button" id="request-otp-btn" class="btn-secondary">Request OTP</button>
+                <div class="otp-button-container">
+                    <button type="button" id="request-otp-btn" class="btn-secondary">Request OTP</button>
+                    <span id="register-otp-timer" class="otp-timer" style="display: none;"></span>
+                </div>
                 <div id="otp-section" style="display: none;">
                     <div class="form-group">
                         <label for="register-otp">Enter OTP</label>
@@ -69,7 +72,10 @@
                     <label for="reset-email">Email</label>
                     <input type="email" id="reset-email" required>
                 </div>
-                <button type="button" id="request-reset-otp-btn" class="btn-secondary">Request OTP</button>
+                <div class="otp-button-container">
+                    <button type="button" id="request-reset-otp-btn" class="btn-secondary">Request OTP</button>
+                    <span id="reset-otp-timer" class="otp-timer" style="display: none;"></span>
+                </div>
                 <div id="reset-otp-section" style="display: none;">
                     <div class="form-group">
                         <label for="reset-otp">Enter OTP</label>
@@ -98,7 +104,12 @@
                 <h1>Seminar Management System</h1>
                 <div class="user-info">
                     <span id="user-info"></span>
-                    <button id="logout-btn" class="btn-secondary">Logout</button>
+                    <div class="header-actions">
+                        <button id="about-btn" class="btn-icon" title="About">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                        <button id="logout-btn" class="btn-secondary">Logout</button>
+                    </div>
                 </div>
             </div>
         </header>
@@ -126,6 +137,9 @@
                     </button>
                     <button id="bulk-import-btn" class="btn-secondary">
                         <i class="fas fa-file-import"></i> Bulk Import
+                    </button>
+                    <button id="export-excel-btn" class="btn-secondary">
+                        <i class="fas fa-file-excel"></i> Export to Excel
                     </button>
                 </div>
             </div>
@@ -361,6 +375,28 @@
                         <i class="fas fa-upload"></i> Import Books
                     </button>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="about-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>About</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="about-content">
+                    <h3>About the Developer</h3>
+                    <p>Hi! I'm <strong>Ahmad Bilal Zaidi</strong> (Enrollment No: 20COB352), the developer behind this Seminar Management System. This project was built as a part of my B.Tech journey in Computer Engineering, where I've focused on solving real-world problems through tech-driven solutions.</p>
+                
+                    <p>I have a strong background in Android development, backend services, and database management. This system reflects my interest in building intuitive and efficient tools—crafted to simplify seminar organization and bring ease to students and faculty alike.</p>
+                
+                    <p>If you'd like to see more of my work or get in touch, feel free to visit my portfolio at 
+                        <a href="https://angryfalcon89.github.io/" target="_blank">angryfalcon89.github.io</a> or check out my GitHub at 
+                        <a href="https://github.com/AngryFalcon89" target="_blank">github.com/AngryFalcon89</a>.
+                    </p>
+                </div>                
             </div>
         </div>
     </div>

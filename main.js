@@ -915,6 +915,90 @@ ipcMain.handle('fetch-book', async (event, { bookId }) => {
     }
 });
 
+ipcMain.handle('get-all-books', async () => {
+    try {
+        const books = await Book.findAll({
+            order: [['createdAt', 'DESC']]
+        });
+        return books;
+    } catch (error) {
+        console.error('Error fetching all books:', error);
+        throw error;
+    }
+});
+
+ipcMain.handle('export-books', async (event) => {
+    try {
+        console.log('Exporting books to Excel');
+        
+        const books = await Book.findAll({
+            order: [['createdAt', 'DESC']]
+        });
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Books');
+
+        // Add headers
+        worksheet.columns = [
+            { header: 'ID', key: 'id', width: 10 },
+            { header: 'Accession Number', key: 'accessionNumber', width: 15 },
+            { header: 'MAL ACC Number', key: 'malAccNumber', width: 15 },
+            { header: 'Author', key: 'author', width: 30 },
+            { header: 'Title', key: 'title', width: 40 },
+            { header: 'Book Status', key: 'bookStatus', width: 15 },
+            { header: 'Edition', key: 'edition', width: 15 },
+            { header: 'Publisher', key: 'publisher', width: 25 },
+            { header: 'Category 1', key: 'category1', width: 20 },
+            { header: 'Category 2', key: 'category2', width: 20 },
+            { header: 'Category 3', key: 'category3', width: 20 },
+            { header: 'Author 1', key: 'author1', width: 25 },
+            { header: 'Author 2', key: 'author2', width: 25 },
+            { header: 'Author 3', key: 'author3', width: 25 },
+            { header: 'Publishing Year', key: 'publishingYear', width: 15 },
+            { header: 'Issued To', key: 'issuedTo', width: 30 }
+        ];
+
+        // Add data
+        books.forEach(book => {
+            worksheet.addRow({
+                id: book.ID,
+                accessionNumber: book.Accession_Number,
+                malAccNumber: book.MAL_ACC_Number,
+                author: book.Author,
+                title: book.Title,
+                bookStatus: book.Book_Status ? 'Available' : 'Issued',
+                edition: book.Edition,
+                publisher: book.Publisher,
+                category1: book.Category1,
+                category2: book.Category2,
+                category3: book.Category3,
+                author1: book.Author1,
+                author2: book.Author2,
+                author3: book.Author3,
+                publishingYear: book.Publishing_Year,
+                issuedTo: book.IssuedTo ? JSON.stringify(book.IssuedTo) : 'Not Issued'
+            });
+        });
+
+        // Style the header row
+        worksheet.getRow(1).font = { bold: true };
+        worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+
+        // Save to file
+        const filePath = path.join(app.getPath('userData'), `books_export_${new Date().toISOString().split('T')[0]}.xlsx`);
+        await workbook.xlsx.writeFile(filePath);
+
+        return {
+            status: 'success',
+            message: 'Books exported successfully',
+            filePath
+        };
+    } catch (error) {
+        console.error('Export books error:', error);
+        return { status: 'error', message: error.message };
+    }
+});
+
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
     console.error('Uncaught Exception:', error);

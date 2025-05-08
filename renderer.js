@@ -19,6 +19,8 @@ const showLoginFromResetLink = document.getElementById('showLoginFromReset');
 const searchButton = document.getElementById('search-button');
 const requestOtpBtn = document.getElementById('request-otp-btn');
 const requestResetOtpBtn = document.getElementById('request-reset-otp-btn');
+const registerOtpTimer = document.getElementById('register-otp-timer');
+const resetOtpTimer = document.getElementById('reset-otp-timer');
 const bulkImportBtn = document.getElementById('bulk-import-btn');
 const bulkImportModal = document.getElementById('bulk-import-modal');
 const bulkImportForm = document.getElementById('bulk-import-form');
@@ -194,6 +196,26 @@ function setupEventListeners() {
     if (bulkImportForm) {
         bulkImportForm.addEventListener('submit', handleBulkImport);
     }
+
+    const exportExcelBtn = document.getElementById('export-excel-btn');
+    if (exportExcelBtn) {
+        exportExcelBtn.addEventListener('click', async () => {
+            try {
+                const books = await ipcRenderer.invoke('get-all-books');
+                await exportToExcel(books);
+            } catch (error) {
+                console.error('Error exporting books:', error);
+                showNotification('Error exporting books to Excel', 'error');
+            }
+        });
+    }
+
+    // About button
+    const aboutBtn = document.getElementById('about-btn');
+    const aboutModal = document.getElementById('about-modal');
+    if (aboutBtn && aboutModal) {
+        aboutBtn.addEventListener('click', () => showModal(aboutModal));
+    }
 }
 
 // Auth Functions
@@ -220,6 +242,25 @@ async function handleLogin(e) {
     }
 }
 
+// Timer function
+function startTimer(timerElement, button, duration = 30) {
+    let timeLeft = duration;
+    timerElement.style.display = 'inline';
+    button.disabled = true;
+    
+    const timer = setInterval(() => {
+        timerElement.textContent = `Resend OTP in ${timeLeft}s`;
+        timeLeft--;
+        
+        if (timeLeft < 0) {
+            clearInterval(timer);
+            timerElement.style.display = 'none';
+            button.disabled = false;
+            button.innerHTML = 'Request OTP';
+        }
+    }, 1000);
+}
+
 async function handleRequestOTP() {
     const name = document.getElementById('register-name').value;
     const username = document.getElementById('register-username').value;
@@ -243,7 +284,7 @@ async function handleRequestOTP() {
             document.getElementById('otp-section').style.display = 'block';
             showNotification('OTP sent to your email', 'success');
             requestOtpBtn.innerHTML = '<i class="fas fa-check"></i> OTP Sent';
-            requestOtpBtn.disabled = true;
+            startTimer(registerOtpTimer, requestOtpBtn);
         } else {
             showNotification(data.message || 'Failed to send OTP', 'error');
             requestOtpBtn.disabled = false;
@@ -322,7 +363,7 @@ async function handleRequestResetOTP() {
             document.getElementById('reset-otp-section').style.display = 'block';
             showNotification('OTP sent to your email', 'success');
             requestResetOtpBtn.innerHTML = '<i class="fas fa-check"></i> OTP Sent';
-            requestResetOtpBtn.disabled = true;
+            startTimer(resetOtpTimer, requestResetOtpBtn);
         } else {
             showNotification(data.message || 'Failed to send OTP', 'error');
             requestResetOtpBtn.disabled = false;
@@ -1122,5 +1163,24 @@ async function handleSendReminder(bookId) {
         // Reset button on error
         button.innerHTML = originalText;
         button.disabled = false;
+    }
+}
+
+async function exportToExcel(books) {
+    try {
+        const response = await ipcRenderer.invoke('export-books');
+
+        if (response.status === 'success') {
+            showNotification('Books exported successfully!', 'success');
+            // Open the exported file
+            if (response.filePath) {
+                shell.openPath(response.filePath);
+            }
+        } else {
+            showNotification(response.message || 'Failed to export books', 'error');
+        }
+    } catch (error) {
+        console.error('Error in exportToExcel:', error);
+        showNotification('Failed to export books: ' + error.message, 'error');
     }
 } 
